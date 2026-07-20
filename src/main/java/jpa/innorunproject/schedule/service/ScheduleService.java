@@ -1,16 +1,19 @@
 package jpa.innorunproject.schedule.service;
 
-import jakarta.validation.Valid;
 import jpa.innorunproject.schedule.domain.Schedule;
 import jpa.innorunproject.schedule.dto.*;
 import jpa.innorunproject.schedule.exception.ScheduleNotFoundException;
+import jpa.innorunproject.schedule.exception.ScheduleUnAccessException;
 import jpa.innorunproject.schedule.repository.ScheduleRepository;
+import jpa.innorunproject.user.domain.User;
+import jpa.innorunproject.user.exception.UserNotFoundException;
+import jpa.innorunproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -18,10 +21,15 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     // 등록
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
-        return CreateScheduleResponse.from(scheduleRepository.save(request.toEntity()));
+        // 해당 UserId가 없다면 예외 처리
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("해당 유저는 존재하지 않습니다."));
+
+        return CreateScheduleResponse.from(scheduleRepository.save(request.toEntity(user)));
     }
 
     // 전체 조회
@@ -45,6 +53,11 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleNotFoundException("해당 일정은 존재하지 않습니다."));
 
+        // 해당 유저가 해당 일정의 주인인지 여부, npe 방지
+        if (schedule.getUser() == null || !Objects.equals(schedule.getUser().getId(), request.getUserId())) {
+            throw new ScheduleUnAccessException("해당 유저의 일정이 존재하지 않거나 권한이 없습니다.");
+        }
+
         schedule.update(request.getTitle(), request.getContent());
         scheduleRepository.saveAndFlush(schedule);
 
@@ -52,9 +65,15 @@ public class ScheduleService {
     }
 
     // 삭제
-    public void deleteSchedule(Long scheduleId) {
+    public void deleteSchedule(Long userId, Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleNotFoundException("해당 일정은 존재하지 않습니다."));
+
+        // 해당 유저가 해당 일정의 주인인지 여부, npe 방지
+        if (schedule.getUser() == null || !Objects.equals(schedule.getUser().getId(),userId)) {
+            throw new ScheduleUnAccessException("해당 유저의 일정이 존재하지 않거나 권한이 없습니다.");
+        }
+
         scheduleRepository.delete(schedule);
     }
 }

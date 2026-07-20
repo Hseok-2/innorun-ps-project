@@ -42,9 +42,9 @@ public class ScheduleController {
     }
 
     // 일정 삭제
-    @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<Void> DeleteSchedule(@PathVariable Long scheduleId) {
-        scheduleService.deleteSchedule(scheduleId);
+    @DeleteMapping("/{userId}/{scheduleId}")
+    public ResponseEntity<Void> DeleteSchedule(@PathVariable Long userId, @PathVariable Long scheduleId) {
+        scheduleService.deleteSchedule(userId, scheduleId);
         return ResponseEntity.noContent().build();
     }
 }

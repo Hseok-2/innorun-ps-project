@@ -10,4 +10,5 @@ public class UpdateScheduleRequest {
     public String title;
     @NotBlank(message = "일정 수정 시 제목 내용은 필수입니다.")
     public String content;
+    public Long userId;
 }
