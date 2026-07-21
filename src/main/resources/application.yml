@@ -19,6 +19,7 @@ logging:
   level:
     org:
       hibernate:
+        sql: debug
         orm:
           jdbc:
             bind: trace
