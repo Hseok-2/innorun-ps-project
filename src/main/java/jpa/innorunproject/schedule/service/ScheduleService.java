@@ -25,7 +25,7 @@ public class ScheduleService {
 
     // 등록
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
-        // 해당 UserId가 없다면 예외 처리
+        // 해당 User가 없다면 예외 처리
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("해당 유저는 존재하지 않습니다."));
 
@@ -65,7 +65,7 @@ public class ScheduleService {
     }
 
     // 삭제
-    public void deleteSchedule(Long userId, Long scheduleId) {
+    public void deleteSchedule(Long scheduleId, Long userId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleNotFoundException("해당 일정은 존재하지 않습니다."));
 

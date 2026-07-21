@@ -35,10 +35,17 @@ public class UserController {
         return ResponseEntity.ok(userService.getOne(userId));
     }
 
-    // 유저 수정
-    @PutMapping("/{userId}")
-    public ResponseEntity<UpdateUserResponse> updateUser(@PathVariable Long userId, @Valid @RequestBody UpdateUserRequest request) {
-        return ResponseEntity.ok(userService.updateUser(userId, request));
+    // 유저 정보 수정
+    @PutMapping("/{userId}/profile")
+    public ResponseEntity<UpdateUserInfoResponse> updateUserInfo(@PathVariable Long userId, @Valid @RequestBody UpdateUserInfoRequest request) {
+        return ResponseEntity.ok(userService.updateUserInfo(userId, request));
+    }
+
+    // 유저 비밀번호 수정
+    @PutMapping("/{userId}/password")
+    public ResponseEntity<Void> updateUserPassword(@PathVariable Long userId, @Valid @RequestBody UpdateUserPasswordRequest request) {
+        userService.updateUserPassword(userId, request);
+        return ResponseEntity.ok().build();
     }
 
     // 유저 삭제

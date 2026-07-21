@@ -31,6 +31,9 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // password 암호화
+    implementation 'at.favre.lib:bcrypt:0.10.2'
 }
 
 tasks.named('test') {
