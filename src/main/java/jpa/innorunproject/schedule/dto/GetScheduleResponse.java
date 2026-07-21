@@ -12,15 +12,17 @@ public class GetScheduleResponse {
     private final Long id;
     private final String title;
     private final String content;
+    private final Long userId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/seoul")
     private final LocalDateTime createAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/seoul")
     private final LocalDateTime updatedAt;
 
-    private GetScheduleResponse(Long id, String title, String content, LocalDateTime createAt, LocalDateTime updatedAt) {
+    private GetScheduleResponse(Long id, String title, String content, Long userId, LocalDateTime createAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.userId = userId;
         this.createAt = createAt;
         this.updatedAt = updatedAt;
     }
@@ -30,6 +32,7 @@ public class GetScheduleResponse {
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
+                schedule.getUser().getId(),
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );

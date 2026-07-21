@@ -23,9 +23,14 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(request));
     }
 
-    // 일정 전체 조회
+    // 일정 전체 조회 or 해당 유저의 일정 전체 조회
     @GetMapping
-    public ResponseEntity<List<GetScheduleResponse>> getAllSchedule() {
+    public ResponseEntity<List<GetScheduleResponse>> getAllSchedule(@RequestParam(required = false) Long userId) {
+
+        // param에 userId가 존재한다면
+        if(userId != null) {
+            return ResponseEntity.ok(scheduleService.getAllByUserId(userId));
+        }
         return ResponseEntity.ok(scheduleService.getAllSchedule());
     }
 

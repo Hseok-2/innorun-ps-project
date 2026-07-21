@@ -9,6 +9,7 @@ import jpa.innorunproject.user.domain.User;
 import jpa.innorunproject.user.exception.UserNotFoundException;
 import jpa.innorunproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,18 @@ public class ScheduleService {
                 .orElseThrow(() -> new ScheduleNotFoundException("해당 일정은 존재하지 않습니다."));
     }
 
+    // 해당 유저의 일정 전체 조회
+    @Transactional(readOnly = true)
+    public List<GetScheduleResponse> getAllByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("해당 유저는 존재하지 않습니다.");
+        }
+
+        return scheduleRepository.findAllByUserId(userId).stream()
+                .map(GetScheduleResponse::from)
+                .toList();
+    }
+
     // 수정
     public UpdateScheduleResponse updateSchedule(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
@@ -64,6 +77,7 @@ public class ScheduleService {
         return UpdateScheduleResponse.from(schedule);
     }
 
+
     // 삭제
     public void deleteSchedule(Long scheduleId, Long userId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
@@ -76,4 +90,5 @@ public class ScheduleService {
 
         scheduleRepository.delete(schedule);
     }
+
 }
