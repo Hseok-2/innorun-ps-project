@@ -1,5 +1,6 @@
 package jpa.innorunproject.schedule.service;
 
+import jpa.innorunproject.comment.repository.CommentRepository;
 import jpa.innorunproject.schedule.domain.Schedule;
 import jpa.innorunproject.schedule.dto.*;
 import jpa.innorunproject.schedule.exception.ScheduleNotFoundException;
@@ -9,11 +10,13 @@ import jpa.innorunproject.user.domain.User;
 import jpa.innorunproject.user.exception.UserNotFoundException;
 import jpa.innorunproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -23,6 +26,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     // 등록
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
@@ -35,10 +39,16 @@ public class ScheduleService {
 
     // 전체 조회
     @Transactional(readOnly = true)
-    public List<GetScheduleResponse> getAllSchedule() {
-        return scheduleRepository.findAll().stream()
-                .map(GetScheduleResponse::from)
-                .toList();
+    public Page<GetSchedulePageResponse> getAllSchedule(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+
+        Page<Schedule> schedulePage = scheduleRepository.findAll(pageable);
+
+        return schedulePage.map(schedule -> {
+            int commentCnt = commentRepository.countByScheduleId(schedule.getId());
+            return GetSchedulePageResponse.from(schedule, commentCnt);
+        });
     }
 
     // 단 건 조회
@@ -51,14 +61,19 @@ public class ScheduleService {
 
     // 해당 유저의 일정 전체 조회
     @Transactional(readOnly = true)
-    public List<GetScheduleResponse> getAllByUserId(Long userId) {
+    public Page<GetSchedulePageResponse> getAllByUserId(Long userId, int page, int size) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("해당 유저는 존재하지 않습니다.");
         }
 
-        return scheduleRepository.findAllByUserId(userId).stream()
-                .map(GetScheduleResponse::from)
-                .toList();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+
+        Page<Schedule> schedulePage = scheduleRepository.findAllByUserId(userId, pageable);
+
+        return schedulePage.map(schedule -> {
+            int commentCnt = commentRepository.countByScheduleId(schedule.getId());
+            return GetSchedulePageResponse.from(schedule, commentCnt);
+        });
     }
 
     // 수정

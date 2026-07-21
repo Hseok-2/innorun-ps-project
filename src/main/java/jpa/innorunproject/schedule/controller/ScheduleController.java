@@ -4,11 +4,10 @@ import jakarta.validation.Valid;
 import jpa.innorunproject.schedule.dto.*;
 import jpa.innorunproject.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +24,20 @@ public class ScheduleController {
 
     // 일정 전체 조회 or 해당 유저의 일정 전체 조회
     @GetMapping
-    public ResponseEntity<List<GetScheduleResponse>> getAllSchedule(@RequestParam(required = false) Long userId) {
+    public ResponseEntity<Page<GetSchedulePageResponse>> getAllSchedule(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<GetSchedulePageResponse> response;
 
         // param에 userId가 존재한다면
         if(userId != null) {
-            return ResponseEntity.ok(scheduleService.getAllByUserId(userId));
+            response = scheduleService.getAllByUserId(userId, page, size);
+        } else {
+            response = scheduleService.getAllSchedule(page, size);
         }
-        return ResponseEntity.ok(scheduleService.getAllSchedule());
+        return ResponseEntity.ok(response);
     }
 
     // 일정 단 건 조회
