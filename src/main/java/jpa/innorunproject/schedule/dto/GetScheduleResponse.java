@@ -1,6 +1,5 @@
 package jpa.innorunproject.schedule.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jpa.innorunproject.schedule.domain.Schedule;
 import lombok.Getter;
 
@@ -13,9 +12,7 @@ public class GetScheduleResponse {
     private final String title;
     private final String content;
     private final Long userId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/seoul")
     private final LocalDateTime createAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/seoul")
     private final LocalDateTime updatedAt;
 
     private GetScheduleResponse(Long id, String title, String content, Long userId, LocalDateTime createAt, LocalDateTime updatedAt) {

@@ -1,6 +1,5 @@
 package jpa.innorunproject.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jpa.innorunproject.user.domain.User;
 import lombok.Getter;
 
@@ -12,9 +11,7 @@ public class CreateUserResponse {
     private final Long id;
     private final String username;
     private final String email;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/seoul")
     private final LocalDateTime createAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/seoul")
     private final LocalDateTime updatedAt;
 
     private CreateUserResponse(Long id, String username, String email, LocalDateTime createAt, LocalDateTime updatedAt) {

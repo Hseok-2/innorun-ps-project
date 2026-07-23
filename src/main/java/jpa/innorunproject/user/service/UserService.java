@@ -1,7 +1,6 @@
 package jpa.innorunproject.user.service;
 
-import jakarta.validation.Valid;
-import jpa.innorunproject.config.PasswordEncoder;
+import jpa.innorunproject.global.config.PasswordEncoder;
 import jpa.innorunproject.user.domain.User;
 import jpa.innorunproject.user.dto.*;
 import jpa.innorunproject.user.exception.UserInvalidPasswordException;

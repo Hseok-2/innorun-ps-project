@@ -1,6 +1,7 @@
 package jpa.innorunproject.user.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import jpa.innorunproject.global.domain.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
+    @Size(min = 8, message = "비밀번호는 {min}자 이상이어야 합니다.")
     private String password;
 
     @Builder
